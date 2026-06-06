@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>たのしい さんすう</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --g1:#68C352; --g1d:#4fa83a;
+    --g2:#00B772; --g2d:#009a5e;
+    --t1:#00A791; --t1d:#008676;
+    --t2:#0095A9; --t2d:#00788a;
+    --b1:#0080B5; --b1d:#006590;
+    --b2:#006AB2; --b2d:#00538c;
+    --ink:#2f4a47;
+    --sun:#ffd23f; --sund:#e8b41f;
+    --coral:#ff8a8a; --corald:#e86a6a;
+    --soft:#eaf7ee;
+    --shadow:rgba(40,90,80,.20);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{min-height:100%;}
+  body{font-family:'Klee One',serif;color:var(--ink);
+    background-color:var(--soft);
+    background-image:radial-gradient(circle, rgba(0,183,114,.14) 4px, transparent 5px),radial-gradient(circle, rgba(0,149,169,.10) 4px, transparent 5px);
+    background-size:34px 34px,34px 34px;background-position:0 0,17px 17px;background-attachment:fixed;
+    overflow-x:hidden;display:flex;flex-direction:column;align-items:center;min-height:100vh;user-select:none;}
+  .blob{position:fixed;border-radius:50%;filter:blur(3px);opacity:.22;z-index:0;animation:float 6s ease-in-out infinite;}
+  .blob.b1{width:120px;height:120px;background:var(--g1);top:6%;left:5%;}
+  .blob.b2{width:90px;height:90px;background:var(--t1);top:16%;right:7%;animation-delay:1.2s;}
+  .blob.b3{width:70px;height:70px;background:var(--b1);bottom:10%;left:10%;animation-delay:2.1s;}
+  .blob.b4{width:60px;height:60px;background:var(--g2);bottom:18%;right:12%;animation-delay:.6s;}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-22px) scale(1.06);}}
+
+  .stage{position:relative;z-index:1;width:100%;max-width:520px;padding:20px;flex:1;display:flex;flex-direction:column;}
+  .screen{display:none;flex-direction:column;flex:1;animation:pop .4s cubic-bezier(.2,1.3,.5,1);}
+  .screen.active{display:flex;}
+  @keyframes pop{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
+
+  .mascot{font-size:84px;text-align:center;line-height:1;animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-12px) rotate(3deg);}}
+  .title{font-weight:600;font-size:clamp(40px,12vw,58px);text-align:center;color:var(--g2d);margin:6px 0 2px;text-shadow:2px 2px 0 #fff,4px 4px 0 var(--shadow);letter-spacing:3px;}
+  .subtitle{text-align:center;font-weight:600;opacity:.75;margin-bottom:26px;font-size:18px;}
+  .speech{position:relative;width:max-content;max-width:260px;margin:0 auto 6px;background:#fff;border:3px solid var(--g2);border-radius:20px;padding:9px 18px;font-weight:600;font-size:18px;color:var(--g2d);text-align:center;box-shadow:0 4px 0 var(--shadow);animation:bob 2.6s ease-in-out infinite;}
+  .speech::after{content:'';position:absolute;bottom:-13px;left:50%;transform:translateX(-50%);border:7px solid transparent;border-top-color:var(--g2);}
+  .menu{display:flex;flex-direction:column;gap:16px;}
+  .mode-btn{font-family:'Klee One',serif;font-weight:600;border:none;border-radius:26px;padding:22px 18px;font-size:27px;color:#fff;cursor:pointer;display:flex;align-items:center;gap:16px;justify-content:center;box-shadow:0 8px 0 var(--bd),0 12px 20px var(--shadow);transition:transform .12s,box-shadow .12s;}
+  .mode-btn:active{transform:translateY(6px);box-shadow:0 2px 0 var(--bd),0 4px 10px var(--shadow);}
+  .mode-btn .ico{font-size:34px;}
+  .m-add{background:var(--g1);--bd:var(--g1d);}
+  .m-sub{background:var(--t2);--bd:var(--t2d);}
+  .m-count{background:var(--g2);--bd:var(--g2d);}
+
+  .lv-head{text-align:center;font-weight:600;font-size:26px;margin:8px 0 4px;}
+  .lv-sub{text-align:center;font-weight:600;opacity:.7;margin-bottom:22px;}
+  .levels{display:flex;flex-direction:column;gap:14px;}
+  .lv-btn{font-family:'Klee One',serif;font-weight:600;border:none;border-radius:24px;padding:18px 22px;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:space-between;box-shadow:0 7px 0 var(--bd),0 10px 16px var(--shadow);transition:transform .12s,box-shadow .12s;}
+  .lv-btn:active{transform:translateY(5px);box-shadow:0 2px 0 var(--bd);}
+  .lv-btn .lv-name{font-size:24px;display:flex;align-items:center;gap:10px;}
+  .lv-btn .lv-range{font-size:18px;background:#ffffffe0;color:var(--ink);border-radius:14px;padding:5px 12px;}
+  .lv1{background:var(--g1);--bd:var(--g1d);}
+  .lv2{background:var(--g2);--bd:var(--g2d);}
+  .lv3{background:var(--t1);--bd:var(--t1d);}
+  .lv4{background:var(--t2);--bd:var(--t2d);}
+  .lv5{background:var(--b2);--bd:var(--b2d);}
+  .back{font-family:'Klee One',serif;font-weight:600;align-self:center;border:none;background:#ffffffcc;border-radius:20px;padding:12px 28px;font-size:19px;color:var(--ink);cursor:pointer;margin-top:22px;box-shadow:0 4px 0 var(--shadow);}
+  .back:active{transform:translateY(3px);}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .icon-btn{border:none;background:#fff;border-radius:18px;width:52px;height:52px;font-size:26px;cursor:pointer;box-shadow:0 4px 0 var(--shadow);transition:transform .1s;}
+  .icon-btn:active{transform:translateY(4px);box-shadow:0 0 0 var(--shadow);}
+  .stars{font-weight:600;background:#fff;border-radius:18px;padding:9px 18px;font-size:22px;color:var(--sund);box-shadow:0 4px 0 var(--shadow);display:flex;align-items:center;gap:6px;}
+  .stars .num{color:var(--ink);}
+  .progress{height:14px;background:#ffffffcc;border-radius:20px;overflow:hidden;margin:10px 2px 14px;box-shadow:inset 0 2px 4px var(--shadow);}
+  .progress > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g1),var(--t1));border-radius:20px;transition:width .4s cubic-bezier(.2,1.3,.5,1);}
+
+  .card{background:#fff;border-radius:30px;padding:14px 18px 18px;box-shadow:0 12px 0 var(--shadow),0 18px 30px var(--shadow);flex:1;display:flex;flex-direction:column;}
+  .lvtag{text-align:center;font-weight:600;font-size:16px;color:var(--t2d);background:#e3f4f3;border-radius:14px;padding:6px 0;margin-bottom:8px;}
+  .question{font-weight:600;text-align:center;font-size:clamp(34px,11vw,54px);color:var(--ink);margin:4px 0 10px;letter-spacing:5px;}
+  .question .op{color:var(--g2d);} .question .eq{color:var(--t1d);} .question .qmark{color:var(--t2);}
+
+  .dots{display:flex;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:16px;min-height:50px;}
+  .dot-group{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;max-width:160px;padding:12px;border-radius:22px;background:#eef8f1;box-shadow:inset 0 2px 6px var(--shadow);}
+  .dot{width:22px;height:22px;border-radius:50%;animation:dotpop .35s backwards;}
+  @keyframes dotpop{from{transform:scale(0);}to{transform:scale(1);}}
+  .dg-a .dot{background:var(--g1);} .dg-b .dot{background:var(--t2);}
+  .dot-plus{align-self:center;font-weight:600;font-size:38px;color:var(--g2d);}
+  .apple-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:280px;margin:0 auto 16px;padding:12px;background:#eef8f1;border-radius:20px;}
+  .appl{font-size:30px;animation:dotpop .35s backwards;}
+
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:auto;}
+  .choice{font-family:'Klee One',serif;font-weight:600;border:none;border-radius:22px;padding:18px 0;font-size:34px;cursor:pointer;background:var(--sun);color:var(--ink);box-shadow:0 7px 0 var(--sund),0 10px 16px var(--shadow);transition:transform .1s,box-shadow .1s;}
+  .choice:active{transform:translateY(5px);box-shadow:0 2px 0 var(--sund);}
+  .choice.correct{background:var(--g2);color:#fff;box-shadow:0 7px 0 var(--g2d);animation:right .5s;}
+  .choice.wrong{background:var(--coral);color:#fff;box-shadow:0 7px 0 var(--corald);animation:shake .4s;}
+  @keyframes right{0%,100%{transform:scale(1);}40%{transform:scale(1.15);}}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+  .tf-area{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:6px;}
+  .tenframe{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px;background:#eef8f1;border-radius:14px;box-shadow:inset 0 2px 5px var(--shadow);}
+  .tf-cell{width:24px;height:24px;border:2px solid #cfe8da;border-radius:6px;background:#fff;}
+  .tf-cell.on.green{background:var(--g1);border-color:var(--g1d);}
+  .tf-cell.on.blue{background:var(--t2);border-color:var(--t2d);}
+  .loose{display:flex;flex-wrap:wrap;gap:6px;max-width:120px;}
+  .ld{width:24px;height:24px;border-radius:6px;}
+  .ld.green{background:var(--g1);border:2px solid var(--g1d);} .ld.blue{background:var(--t2);border:2px solid var(--t2d);}
+  .hintbtn{font-family:'Klee One',serif;font-weight:600;display:block;margin:4px auto;border:none;background:var(--t1);color:#fff;border-radius:16px;padding:8px 18px;font-size:16px;box-shadow:0 4px 0 var(--t1d);cursor:pointer;}
+  .hintbtn:active{transform:translateY(3px);}
+  .hint{display:none;background:#f3fbf6;border-radius:16px;padding:8px;margin:6px 0;}
+  .hint.show{display:block;animation:fbpop .3s;}
+  .hint-text{text-align:center;font-weight:600;font-size:18px;line-height:1.8;margin-top:4px;}
+  .cherry{width:200px;max-width:78%;height:auto;display:block;margin:4px auto;}
+  .cherry line{stroke:#b9d8c8;stroke-width:3;}
+  .cherry circle{fill:#fff;stroke:var(--g2);stroke-width:3;}
+  .cherry text{font-family:'Klee One',serif;font-weight:600;font-size:22px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;}
+
+  .hissan{display:grid;grid-template-columns:38px 48px 48px;justify-content:center;margin:6px auto 4px;font-size:34px;font-weight:600;}
+  .hcell{display:flex;align-items:center;justify-content:center;height:46px;}
+  .hcell.tens{background:#e9f7ef;} .hcell.ones{background:#e2f2f5;}
+  .hcell.lbl{height:24px;font-size:12px;color:var(--t2d);}
+  .hcell.lbl.ones{color:var(--g2d);}
+  .hcell.sign{color:var(--g2d);}
+  .hrule{grid-column:1/4;height:5px;background:var(--ink);border-radius:4px;margin:5px 0;}
+  .abox{border:2px dashed #bfe0d2;border-radius:8px;color:var(--g2d);cursor:pointer;}
+  .abox.active{border-style:solid;border-color:var(--g2);background:#e9f9f0;}
+  .abox.shakeit{animation:shake .4s;}
+
+  .wq-text{font-weight:600;font-size:19px;line-height:1.7;background:#eef8f1;border-radius:16px;padding:13px;margin-bottom:10px;}
+  .wq-illo{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin-bottom:6px;min-height:50px;}
+  .egrp{display:inline-flex;flex-wrap:wrap;gap:5px;justify-content:center;max-width:200px;padding:8px;background:#eef8f1;border-radius:16px;}
+  .wemo{font-size:30px;line-height:1.1;animation:dotpop .35s backwards;display:inline-block;}
+  .wemo.crossed{position:relative;opacity:.32;}
+  .wemo.crossed::after{content:'✕';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--corald);font-size:26px;}
+  .wplus{font-weight:600;font-size:34px;color:var(--g2d);}
+
+  .inputBox{font-weight:600;text-align:center;font-size:34px;background:#eef8f1;border-radius:16px;padding:4px;margin:8px auto 8px;min-width:120px;letter-spacing:6px;}
+  .inputBox.shakeit{animation:shake .4s;background:#ffe1e1;}
+  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:360px;margin:0 auto;}
+  .key{font-family:'Klee One',serif;font-weight:600;border:none;border-radius:12px;padding:12px 0;font-size:24px;color:var(--ink);background:#fff;box-shadow:0 4px 0 var(--shadow);cursor:pointer;transition:transform .1s,box-shadow .1s;}
+  .key:active{transform:translateY(4px);box-shadow:0 1px 0 var(--shadow);}
+  .key.ok{background:var(--g2);color:#fff;box-shadow:0 4px 0 var(--g2d);}
+  .key.del{background:var(--coral);color:#fff;box-shadow:0 4px 0 var(--corald);font-size:20px;}
+
+  .feedback{text-align:center;font-weight:600;font-size:26px;min-height:26px;margin-top:8px;opacity:0;transition:opacity .2s;}
+  .feedback.show{opacity:1;animation:fbpop .4s;}
+  @keyframes fbpop{from{transform:scale(.6);}to{transform:scale(1);}}
+  .feedback.good{color:var(--g2d);} .feedback.try{color:var(--corald);}
+
+  .win{align-items:center;justify-content:center;text-align:center;gap:6px;}
+  .win .big{font-size:96px;animation:bob 1.6s ease-in-out infinite;}
+  .win h2{font-weight:600;font-size:44px;color:var(--g2d);text-shadow:2px 2px 0 #fff;}
+  .win p{font-weight:600;font-size:20px;opacity:.78;margin-bottom:6px;}
+  .win .earned{font-weight:600;font-size:28px;color:var(--sund);margin-bottom:6px;}
+  .win-btns{display:flex;flex-direction:column;gap:12px;margin-top:14px;width:100%;max-width:320px;}
+  .wbtn{font-family:'Klee One',serif;font-weight:600;border:none;border-radius:24px;padding:18px 0;font-size:22px;color:var(--ink);cursor:pointer;transition:transform .1s;}
+  .wbtn.next{background:var(--g2);color:#fff;box-shadow:0 7px 0 var(--g2d);}
+  .wbtn.home{background:#fff;box-shadow:0 6px 0 var(--shadow);}
+  .wbtn:active{transform:translateY(5px);}
+
+  .maru{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;}
+  .maru svg{width:min(72vw,360px);height:auto;}
+  .maru circle{fill:none;stroke:#ff3b3b;stroke-width:11;stroke-linecap:round;stroke-dasharray:502;stroke-dashoffset:502;}
+  .maru.show{animation:maruHold 1.05s ease forwards;}
+  .maru.show circle{animation:maruDraw .5s .05s ease forwards;}
+  @keyframes maruHold{0%{opacity:0;}12%{opacity:1;}80%{opacity:1;}100%{opacity:0;}}
+  @keyframes maruDraw{from{stroke-dashoffset:502;}to{stroke-dashoffset:0;}}
+  .confetti{position:fixed;top:-20px;width:12px;height:12px;z-index:50;pointer-events:none;border-radius:2px;}
+</style>
+</head>
+<body>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+  <div class="stage">
+    <section class="screen active" id="home">
+      <div class="speech">いっくん、がんばって！</div>
+      <div class="mascot">🦊</div>
+      <h1 class="title">たのしい<br>さんすう</h1>
+      <p class="subtitle">すきな もんだいを えらんでね</p>
+      <div class="menu">
+        <button class="mode-btn m-add" onclick="chooseMode('add')"><span class="ico">➕</span>たしざん</button>
+        <button class="mode-btn m-sub" onclick="chooseMode('sub')"><span class="ico">➖</span>ひきざん</button>
+        <button class="mode-btn m-count" onclick="startGame('count',1)"><span class="ico">🍎</span>かぞえよう</button>
+      </div>
+    </section>
+
+    <section class="screen" id="levelSelect">
+      <div class="mascot" style="font-size:60px">🦊</div>
+      <div class="lv-head" id="lvHead">たしざん</div>
+      <div class="lv-sub">レベルを えらんでね</div>
+      <div class="levels" id="levels"></div>
+      <button class="back" onclick="goHome()">◀ もどる</button>
+    </section>
+
+    <section class="screen" id="game">
+      <div class="topbar">
+        <button class="icon-btn" onclick="goHome()">🏠</button>
+        <div class="stars">⭐<span class="num" id="starCount">0</span></div>
+        <button class="icon-btn" id="soundBtn" onclick="toggleSound()">🔊</button>
+      </div>
+      <div class="progress"><i id="bar"></i></div>
+      <div class="card" id="card"></div>
+    </section>
+
+    <section class="screen win" id="win">
+      <div class="big">🏆</div>
+      <h2>すごい！</h2>
+      <p>10もん せいかい したよ！</p>
+      <div class="earned" id="earned"></div>
+      <div class="win-btns" id="winBtns"></div>
+    </section>
+  </div>
+  <div class="maru" id="maru"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" transform="rotate(90 100 100)"/></svg></div>
+
+<script>
+  const ROUNDS=10;
+  const LEVELS={1:{max:9,label:'0〜9'},2:{max:10,label:'0〜10'},3:{max:20,label:'〜20 くりあがり'},4:{max:99,label:'2けた ひっさん'},5:{max:20,label:'ぶんしょうだい'}};
+  const MODE_NAME={add:'たしざん',sub:'ひきざん',count:'かぞえよう'};
+  const WOBJ=[{n:'りんご',e:'🍎'},{n:'みかん',e:'🍊'},{n:'いちご',e:'🍓'},{n:'バナナ',e:'🍌'},{n:'もも',e:'🍑'},{n:'さくらんぼ',e:'🍒'},{n:'あめ',e:'🍬'},{n:'クッキー',e:'🍪'},{n:'ドーナツ',e:'🍩'},{n:'ケーキ',e:'🍰'},{n:'プリン',e:'🍮'},{n:'たまご',e:'🥚'},{n:'パン',e:'🍞'}];
+
+  let mode='add',level=1,round=0,answer=0,stars=0,soundOn=true,locked=false;
+  let inputMode='string',inputStr='',colTens='',colOnes='',activeCol='ones';
+  const $=id=>document.getElementById(id);
+  const rnd=n=>Math.floor(Math.random()*n);
+
+  let actx;
+  function beep(freq,dur,type='sine'){
+    if(!soundOn)return;
+    try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+      const o=actx.createOscillator(),g=actx.createGain();
+      o.type=type;o.frequency.value=freq;o.connect(g);g.connect(actx.destination);
+      g.gain.setValueAtTime(.18,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
+      o.start();o.stop(actx.currentTime+dur);}catch(e){}
+  }
+  const goodSound=()=>{beep(660,.12);setTimeout(()=>beep(880,.18),110);};
+  const badSound=()=>beep(200,.2,'triangle');
+  const winSound=()=>[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.2),i*140));
+  function toggleSound(){soundOn=!soundOn;$('soundBtn').textContent=soundOn?'🔊':'🔇';}
+
+  function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
+  function goHome(){show('home');}
+
+  function chooseMode(m){
+    mode=m;$('lvHead').textContent=MODE_NAME[m];
+    const box=$('levels');box.innerHTML='';
+    for(let i=1;i<=5;i++){
+      const b=document.createElement('button');
+      b.className='lv-btn lv'+i;
+      b.innerHTML='<span class="lv-name">レベル'+i+'</span><span class="lv-range">'+LEVELS[i].label+'</span>';
+      b.onclick=()=>startGame(m,i);
+      box.appendChild(b);
+    }
+    show('levelSelect');
+  }
+  function startGame(m,lv){mode=m;level=lv;round=0;show('game');nextQuestion();}
+
+  function playType(){
+    if(mode==='count')return 'choice';
+    if(level<=2)return 'choice';
+    if(level===3)return 'tenframe';
+    if(level===4)return 'column';
+    return 'word';
+  }
+
+  function makeProblem(){
+    const t=playType();
+    if(t==='choice'&&mode==='count'){const a=rnd(9)+1;answer=a;return {type:'choice',variant:'count',a};}
+    if(t==='choice'){
+      const max=LEVELS[level].max;let a,b;
+      if(mode==='add'){a=rnd(max+1);b=rnd(max-a+1);answer=a+b;}
+      else{a=rnd(max+1);b=rnd(a+1);answer=a-b;}
+      return {type:'choice',variant:'calc',a,b,showDots:level<=2};
+    }
+    if(t==='tenframe'){
+      if(mode==='add'){
+        const a=rnd(8)+2;const lo=Math.max(2,11-a);const b=lo+rnd(9-lo+1);
+        answer=a+b;return {type:'tenframe',op:'add',a,b,need:10-a,remaining:a+b-10};
+      }else{
+        const m=rnd(8)+11;const ones=m-10;const s=ones+1+rnd(9-ones);
+        answer=m-s;return {type:'tenframe',op:'sub',m,s,ones,res10:10-s};
+      }
+    }
+    if(t==='column'){
+      if(mode==='add'){const a=10+rnd(40),b=10+rnd(40);answer=a+b;return {type:'column',op:'add',a,b};}
+      const a=20+rnd(30);const b=10+rnd(a-10+1);answer=a-b;return {type:'column',op:'sub',a,b};
+    }
+    if(mode==='add'){const a=rnd(9)+1,b=rnd(9)+1;answer=a+b;return {type:'word',op:'add',a,b};}
+    const a=rnd(17)+2,b=rnd(a)+1;answer=a-b;return {type:'word',op:'sub',a,b};
+  }
+
+  function dg(n,cls){let s='';for(let i=0;i<n;i++)s+='<div class="dot" style="animation-delay:'+(i*0.04)+'s"></div>';return '<div class="dot-group '+cls+'">'+s+'</div>';}
+  function dotsRow(a,b,op){return '<div class="dots">'+dg(a,'dg-a')+'<div class="dot-plus">'+(op==='+'?'＋':'−')+'</div>'+dg(b,'dg-b')+'</div>';}
+  function appleRow(n){let s='';for(let i=0;i<n;i++)s+='<span class="appl" style="animation-delay:'+(i*0.05)+'s">🍎</span>';return '<div class="apple-row">'+s+'</div>';}
+  function tenFrame(filled,color){let c='';for(let i=0;i<10;i++)c+='<div class="tf-cell '+(i<filled?'on '+color:'')+'"></div>';return '<div class="tenframe">'+c+'</div>';}
+  function looseDots(n,color){let d='';for(let i=0;i<n;i++)d+='<div class="ld '+color+'"></div>';return '<div class="loose">'+d+'</div>';}
+  function sakuranbo(t,l,r){
+    return '<svg class="cherry" viewBox="0 0 200 130"><line x1="100" y1="40" x2="55" y2="92"/><line x1="100" y1="40" x2="145" y2="92"/>'
+      +'<circle cx="100" cy="32" r="24"/><circle cx="55" cy="100" r="24"/><circle cx="145" cy="100" r="24"/>'
+      +'<text x="100" y="32">'+t+'</text><text x="55" y="100">'+l+'</text><text x="145" y="100">'+r+'</text></svg>';
+  }
+  function emojiGroup(n,e){let s='';for(let i=0;i<n;i++)s+='<span class="wemo" style="animation-delay:'+(i*0.04)+'s">'+e+'</span>';return '<span class="egrp">'+s+'</span>';}
+  function emojiGroupCross(total,removed,e){let s='';for(let i=0;i<total;i++){const cr=i>=total-removed?' crossed':'';s+='<span class="wemo'+cr+'" style="animation-delay:'+(i*0.04)+'s">'+e+'</span>';}return '<span class="egrp">'+s+'</span>';}
+
+  function makeChoices(correct){
+    const max=LEVELS[level].max;const spread=max<=10?3:max<=20?5:12;
+    const set=new Set([correct]);let guard=0;
+    while(set.size<4&&guard<60){guard++;let d=correct+(rnd(spread*2+1)-spread);if(d>=0&&d<=max)set.add(d);}
+    let f=0;while(set.size<4){if(f<=max)set.add(f);f++;if(f>200)break;}
+    return [...set].sort(()=>Math.random()-.5);
+  }
+
+  function keypadKeys(){
+    let k='';for(let n=1;n<=9;n++)k+='<button class="key" onclick="kp(\''+n+'\')">'+n+'</button>';
+    return '<div class="keypad">'+k+'<button class="key del" onclick="kpDel()">⌫</button><button class="key" onclick="kp(\'0\')">0</button><button class="key ok" onclick="kpEnter()">✓</button></div>';
+  }
+  function keypadArea(){return '<div class="inputBox" id="inputBox">?</div>'+keypadKeys();}
+
+  function buildChoice(p){
+    let illo;
+    if(p.variant==='count'){illo='<div class="question"><span class="qmark">いくつ あるかな？</span></div>'+appleRow(p.a);}
+    else{const op=mode==='add'?'+':'−';
+      illo='<div class="question">'+p.a+' <span class="op">'+op+'</span> '+p.b+' <span class="eq">=</span> <span class="qmark">?</span></div>';
+      if(p.showDots)illo+=dotsRow(p.a,p.b,op);}
+    let btns=makeChoices(answer).map(v=>'<button class="choice" onclick="checkChoice(this,'+v+')">'+v+'</button>').join('');
+    return illo+'<div class="choices">'+btns+'</div>';
+  }
+  function buildTenFrame(p){
+    let q,frames,hint;
+    if(p.op==='add'){
+      q=p.a+' <span class="op">+</span> '+p.b+' <span class="eq">=</span> <span class="qmark">?</span>';
+      frames='<div class="tf-area">'+tenFrame(p.a,'green')+looseDots(p.b,'blue')+'</div>';
+      hint='<div class="hint" id="hint">'+sakuranbo(p.b,p.need,p.remaining)+'<p class="hint-text">'+p.a+' と '+p.need+' で 10、10 と '+p.remaining+' で ?</p></div>';
+    }else{
+      q=p.m+' <span class="op">−</span> '+p.s+' <span class="eq">=</span> <span class="qmark">?</span>';
+      frames='<div class="tf-area">'+tenFrame(10,'green')+tenFrame(p.ones,'blue')+'</div>';
+      hint='<div class="hint" id="hint">'+sakuranbo(p.m,10,p.ones)+'<p class="hint-text">10 から '+p.s+' を ひいて '+p.res10+'、'+p.res10+' と '+p.ones+' で ?</p></div>';
+    }
+    return '<div class="question">'+q+'</div>'+frames+'<button class="hintbtn" onclick="toggleHint()">💡 10を つくる ヒント</button>'+hint+keypadArea();
+  }
+  function buildColumn(p){
+    const aT=(p.a/10|0),aO=p.a%10,bT=(p.b/10|0),bO=p.b%10,sign=p.op==='add'?'＋':'−';
+    let h='<div class="hissan">';
+    h+='<div class="hcell lbl"></div><div class="hcell lbl tens">じゅう</div><div class="hcell lbl ones">いち</div>';
+    h+='<div class="hcell"></div><div class="hcell tens">'+aT+'</div><div class="hcell ones">'+aO+'</div>';
+    h+='<div class="hcell sign">'+sign+'</div><div class="hcell tens">'+bT+'</div><div class="hcell ones">'+bO+'</div>';
+    h+='<div class="hrule"></div>';
+    h+='<div class="hcell"></div><div class="hcell tens abox" id="fAnsT" onclick="selectCol(\'tens\')"></div><div class="hcell ones abox" id="fAnsO" onclick="selectCol(\'ones\')"></div>';
+    h+='</div>';
+    let hint;
+    if(p.op==='add'){
+      const os=aO+bO,c=os>=10?1:0;
+      hint='①いちのくらい：'+aO+'＋'+bO+'＝'+os+(c?'　→　'+(os%10)+'を かいて 1くりあがり':'')+'<br>②じゅうのくらい：'+aT+'＋'+bT+(c?'＋1':'')+'＝'+(aT+bT+c);
+    }else{
+      if(aO>=bO)hint='①いちのくらい：'+aO+'−'+bO+'＝'+(aO-bO)+'<br>②じゅうのくらい：'+aT+'−'+bT+'＝'+(aT-bT);
+      else hint='①いちのくらい：'+aO+'から'+bO+'は ひけないので じゅうのくらいから 1かりて '+(10+aO)+'−'+bO+'＝'+(10+aO-bO)+'<br>②じゅうのくらい：のこった '+(aT-1)+'から '+bT+'を ひいて '+(aT-1-bT);
+    }
+    return h+'<button class="hintbtn" onclick="toggleHint()">💡 ひっさんの やりかた</button><div class="hint" id="hint"><p class="hint-text">'+hint+'</p></div>'+keypadKeys();
+  }
+  function buildWord(p){
+    const o=WOBJ[rnd(WOBJ.length)];let text,illo;
+    if(p.op==='add'){
+      const tpls=[o.n+'が '+p.a+'こ あります。'+p.b+'こ もらいました。ぜんぶで なんこ？','おさらに '+o.n+'が '+p.a+'こ あります。'+p.b+'こ ふえました。あわせて なんこ？'];
+      text=tpls[rnd(tpls.length)];
+      illo='<div class="wq-illo">'+emojiGroup(p.a,o.e)+'<span class="wplus">＋</span>'+emojiGroup(p.b,o.e)+'</div>';
+    }else{
+      const tpls=[o.n+'が '+p.a+'こ ありました。'+p.b+'こ たべました。のこりは なんこ？',o.n+'が '+p.a+'こ ありました。'+p.b+'こ あげました。のこりは なんこ？'];
+      text=tpls[rnd(tpls.length)];
+      illo='<div class="wq-illo">'+emojiGroupCross(p.a,p.b,o.e)+'</div>';
+    }
+    return '<div class="wq-text">'+text+'</div><button class="hintbtn" onclick="toggleHint()">💡 えを みる</button><div class="hint" id="hint">'+illo+'</div>'+keypadArea();
+  }
+
+  function toggleHint(){const h=$('hint');if(h)h.classList.toggle('show');}
+
+  function nextQuestion(){
+    locked=false;inputStr='';colTens='';colOnes='';activeCol='ones';
+    const p=makeProblem();
+    const lvtag=mode==='count'?'かぞえよう':('レベル'+level+'・'+LEVELS[level].label);
+    let html='<div class="lvtag">'+lvtag+'</div>';
+    if(p.type==='choice')html+=buildChoice(p);
+    else if(p.type==='tenframe')html+=buildTenFrame(p);
+    else if(p.type==='column')html+=buildColumn(p);
+    else html+=buildWord(p);
+    html+='<div class="feedback" id="feedback"></div>';
+    $('card').innerHTML=html;
+    $('bar').style.width=(round/ROUNDS*100)+'%';
+    if(p.type==='column'){inputMode='column';updateCol();}
+    else if(p.type!=='choice'){inputMode='string';updateInput();}
+  }
+
+  function gotCorrect(){
+    if(locked)return;locked=true;goodSound();
+    stars++;$('starCount').textContent=stars;
+    showMaru();
+    round++;$('bar').style.width=(round/ROUNDS*100)+'%';
+    if(round>=ROUNDS)setTimeout(winScreen,1050);else setTimeout(nextQuestion,1050);
+  }
+  function showMaru(){const m=$('maru');m.classList.remove('show');void m.offsetWidth;m.classList.add('show');setTimeout(()=>m.classList.remove('show'),1050);}
+  function gotWrong(){const fb=$('feedback');if(fb){fb.textContent='もういちど！';fb.className='feedback try show';}badSound();}
+
+  function checkChoice(btn,val){
+    if(locked)return;
+    if(val===answer){btn.classList.add('correct');gotCorrect();}
+    else{btn.classList.add('wrong');gotWrong();setTimeout(()=>{btn.classList.remove('wrong');btn.disabled=true;},400);}
+  }
+
+  function updateInput(){const b=$('inputBox');if(b)b.textContent=inputStr===''?'?':inputStr;}
+  function updateCol(){
+    const t=$('fAnsT'),o=$('fAnsO');if(!t||!o)return;
+    t.textContent=colTens;o.textContent=colOnes;
+    t.classList.toggle('active',activeCol==='tens');
+    o.classList.toggle('active',activeCol==='ones');
+  }
+  function selectCol(w){if(locked||inputMode!=='column')return;activeCol=w;updateCol();}
+
+  function kp(d){
+    if(locked)return;
+    if(inputMode==='column'){
+      if(activeCol==='ones'){colOnes=d;activeCol='tens';}else{colTens=d;}
+      updateCol();
+    }else{if(inputStr.length<2)inputStr+=d;updateInput();}
+  }
+  function kpDel(){
+    if(locked)return;
+    if(inputMode==='column'){
+      if(activeCol==='tens'){if(colTens!=='')colTens='';else{activeCol='ones';colOnes='';}}
+      else{colOnes='';}
+      updateCol();
+    }else{inputStr=inputStr.slice(0,-1);updateInput();}
+  }
+  function kpEnter(){
+    if(locked)return;
+    if(inputMode==='column'){
+      if(colTens===''&&colOnes==='')return;
+      const val=(colTens===''?0:+colTens)*10+(colOnes===''?0:+colOnes);
+      if(val===answer)gotCorrect();
+      else{gotWrong();const t=$('fAnsT'),o=$('fAnsO');[t,o].forEach(x=>x&&x.classList.add('shakeit'));
+        setTimeout(()=>{colTens='';colOnes='';activeCol='ones';[t,o].forEach(x=>x&&x.classList.remove('shakeit'));updateCol();},450);}
+    }else{
+      if(inputStr==='')return;
+      if(Number(inputStr)===answer)gotCorrect();
+      else{gotWrong();const b=$('inputBox');b.classList.add('shakeit');setTimeout(()=>{b.classList.remove('shakeit');inputStr='';updateInput();},450);}
+    }
+  }
+
+  function winScreen(){
+    show('win');winSound();
+    $('earned').textContent='⭐ ×'+ROUNDS+' ゲット！';
+    const box=$('winBtns');box.innerHTML='';
+    if(mode!=='count'&&level<5){const n=document.createElement('button');n.className='wbtn next';n.textContent='▶ レベル'+(level+1)+'に すすむ';n.onclick=()=>startGame(mode,level+1);box.appendChild(n);}
+    if(mode!=='count'){const r=document.createElement('button');r.className='wbtn home';r.textContent='もういちど レベル'+level;r.onclick=()=>startGame(mode,level);box.appendChild(r);}
+    const h=document.createElement('button');h.className='wbtn home';h.textContent='🏠 さいしょの がめんへ';h.onclick=goHome;box.appendChild(h);
+    burstConfetti();
+  }
+  function burstConfetti(){
+    const colors=['#68C352','#00B772','#00A791','#0095A9','#ffd23f','#ff8a8a'];
+    for(let i=0;i<60;i++){
+      const c=document.createElement('div');c.className='confetti';
+      c.style.left=Math.random()*100+'vw';c.style.background=colors[rnd(colors.length)];c.style.transform='rotate('+rnd(360)+'deg)';
+      const dur=2+Math.random()*1.5;
+      c.animate([{transform:'translateY(0) rotate(0)',opacity:1},{transform:'translateY(110vh) rotate('+rnd(720)+'deg)',opacity:.9}],{duration:dur*1000,easing:'cubic-bezier(.3,.6,.5,1)'});
+      document.body.appendChild(c);setTimeout(()=>c.remove(),dur*1000);
+    }
+  }
+</script>
+</body>
+</html>
